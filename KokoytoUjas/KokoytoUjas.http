@@ -1,0 +1,6 @@
+@KokoytoUjas_HostAddress = http://localhost:5227
+
+GET {{KokoytoUjas_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
