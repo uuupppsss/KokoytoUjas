@@ -22,6 +22,37 @@ namespace KokoytoUjas.Controllers
             }
         };
 
+        List<Document> _documents = new List<Document>()
+        {
+            new Document()
+            {
+                id= 1,
+                title=" oao mmm",
+                date_created=new DateTime(2024/9/20),
+                date_updated=new DateTime(2024/9/25),
+                category="хз",
+                has_comments=true,
+
+            }
+        };
+
+        List<Comments> _comments = new List<Comments>()
+        {
+            new Comments()
+            {
+                id=1,
+                document_id=1,
+                text="Hello",
+                date_created=new DateTime(2024/9/25),
+                date_updated=new DateTime(2024/9/30),
+                author=new Author()
+                    {
+                        name="паша",
+                        position="admin"
+                    } 
+            }
+        };
+
         [HttpPost("signin")]
         public ActionResult<ResponseTokenAndRole> SignIn(User user)
         {
@@ -57,6 +88,21 @@ namespace KokoytoUjas.Controllers
                 Token = token,
                 Role = role
             });
+        }
+
+        [HttpGet("Documents")]
+        public ActionResult<List<Document>> Documents()
+        {
+            List<Document> docs = [.. _documents];
+            return Ok(docs);
+        }
+
+        [HttpGet("Document/{documentId}/Comments")]
+        public ActionResult Comments(int documentId)
+        {
+            List<Comments> comments = [.. _comments];
+            List<Comments> comments_to_doc=comments.Where(c=>c.document_id==documentId).ToList();
+            return Ok(comments_to_doc);
         }
     }
 }
