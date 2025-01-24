@@ -56,9 +56,15 @@ namespace KokoytoUjas.Controllers
         [HttpPost("signin")]
         public ActionResult<ResponseTokenAndRole> SignIn(User user)
         {
+            if (user == null) return BadRequest(new Error()
+            {
+                timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                message = "Неправильно сформирован запроса",
+                errorCode = 1400
+            });
             User? found_user = _users.FirstOrDefault(u => u.Login == user.Login && u.Password == user.Password);
             if (found_user is null)
-                return Unauthorized();
+                return Forbid("Неверные авторизационные данные");
            
             string role = found_user.Role;
             string username = found_user.Login;
@@ -72,7 +78,6 @@ namespace KokoytoUjas.Controllers
                 //юз
                 new Claim(ClaimTypes.Name, username)
             };
-
             // создаем
             var jwt = new JwtSecurityToken(
                     issuer: AuthOptions.ISSUER,
@@ -102,14 +107,24 @@ namespace KokoytoUjas.Controllers
         {
             List<Comment> comments = [.. _comments];
             List<Comment> comments_to_doc=comments.Where(c=>c.document_id==documentId).ToList();
-            if (comments_to_doc == null) return BadRequest("Не найдены комментарии для документа");
+            if (comments_to_doc == null) return NotFound(new Error()
+            {
+                timestamp = DateTimeOffset.Now.ToUnixTimeSeconds(),
+                message = "Не найдены комментарии для документа",
+                errorCode = 1404
+            });
             return Ok(comments_to_doc);
         }
 
         [HttpGet("Document/{documentId}/Comment")]
         public ActionResult Comment(Comment comment)
         {
-            if (comment == null) return BadRequest();
+            if (comment == null) return BadRequest(new Error()
+            {
+                timestamp= DateTimeOffset.Now.ToUnixTimeSeconds(),
+                message= "Неправильно сформирован запроса",
+                errorCode = 1401
+            });
             _comments.Add(comment);
             return Ok();
         }
