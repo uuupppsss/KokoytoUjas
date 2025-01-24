@@ -1,6 +1,6 @@
 ﻿namespace KokoytoUjas.Model
 {
-    public class Comments
+    public class Comment
     {
         public int id { get; set; } 
         public int document_id { get; set; }

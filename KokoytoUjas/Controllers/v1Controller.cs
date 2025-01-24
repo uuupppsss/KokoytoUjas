@@ -36,9 +36,9 @@ namespace KokoytoUjas.Controllers
             }
         };
 
-        List<Comments> _comments = new List<Comments>()
+        List<Comment> _comments = new List<Comment>()
         {
-            new Comments()
+            new Comment()
             {
                 id=1,
                 document_id=1,
@@ -97,12 +97,21 @@ namespace KokoytoUjas.Controllers
             return Ok(docs);
         }
 
-        [HttpGet("Document/{documentId}/Comments")]
+        [HttpGet("Document/{documentId}/Comment")]
         public ActionResult Comments(int documentId)
         {
-            List<Comments> comments = [.. _comments];
-            List<Comments> comments_to_doc=comments.Where(c=>c.document_id==documentId).ToList();
+            List<Comment> comments = [.. _comments];
+            List<Comment> comments_to_doc=comments.Where(c=>c.document_id==documentId).ToList();
+            if (comments_to_doc == null) return BadRequest("Не найдены комментарии для документа");
             return Ok(comments_to_doc);
+        }
+
+        [HttpGet("Document/{documentId}/Comment")]
+        public ActionResult Comment(Comment comment)
+        {
+            if (comment == null) return BadRequest();
+            _comments.Add(comment);
+            return Ok();
         }
     }
 }
